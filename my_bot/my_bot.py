@@ -3,15 +3,18 @@ import time
 import random
 print('this is my twitter bot ')
 
-CONSUMER_KEY = '3uTGXZn8zXB7MDWZ4Xjs3zBSR'
-CONSUMER_SECRET = '3B7mjaKh6fzfQCEtYqjTdj9RSfkADoGMiUuKtKB68ikPFHW6m4'
+CONSUMER_KEY = '****'
+CONSUMER_SECRET = '****'
 
-ACESS_KEY = '1203421137495089154-s593xwKx9yHhH69SoZJzkQl9Q8E0pV'
-ACESS_SECRET = 'jshYzMZDQjBotXLKRd0qvbiyIIJ0vdbgyN75GpmBwBV3N'
+ACESS_KEY = '****'
+ACESS_SECRET = '****'
 
 auth = tweepy.OAuthHandler(CONSUMER_KEY,CONSUMER_SECRET)
 auth.set_access_token(ACESS_KEY,ACESS_SECRET)
-api = tweepy.API(auth)
+api = tweepy.API(auth,wait_on_rate_limit=True)
+
+tweets = tweepy.Cursor(api.search,q="#FalaProgramadores",
+                           lang="pt", since="2019-10-01").items()
 
 mentions = api.mentions_timeline()
 nome_Arq = 'ultimoVisto.txt'
@@ -42,24 +45,10 @@ def retweet_Mensionado():
             api.create_favorite(mention.id)
 
 
-
-def favArroba():
-    ultimo_id = ultimo_visto(nome_Arq)
-    for tweet in api.search(q="luccastraumer", lang="pt", rpp=10):
-        mentions = api.mentions_timeline(tweet.id,
-                                         tweet_mode='extended')
-        for mention in reversed(mentions):
-                print(str(mention.id) + ' - ' + mention.full_text)
-                ultimo_id = mention.id
-                armazenar_Ultimo_Visto(ultimo_id, nome_Arq)
-                if 'vai mano' in mention.full_text.lower() and tweet.text.lower():
-                    statis = '@' + mention.user.screen_name + ' O MAIS BRABOOO!'
-                    api.update_status(statis, mention.id)
-                    api.create_favorite(mention.id)
-                else:
-                    continue
-
+def mostra():
+    for tweet in tweets:
+        print(tweet.text)
 while True:
     #retweet_Mensionado()
-    favArroba()
+    mostra()
     time.sleep(30)
